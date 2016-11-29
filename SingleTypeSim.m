@@ -69,6 +69,7 @@ title('Costs Along Routes of the Standard Potential Function on Marden Example')
 legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
 
 %% Simulate the potential function given in Smith
+F = F0;
 
 for i = 1:T
    F_evol(:, i) = F;
