@@ -56,6 +56,8 @@ for i = 1:T
    F = projsplx(F_tilde);
 end
 
+F_standard = F;
+
 figure
 plot(1:1:T, F_evol);
 title('Traffic Flow to Equilibrium of the Standard Potential Function on Marden Example');
@@ -93,6 +95,8 @@ for i = 1:T
    
    F = projsplx(F_tilde);
 end
+
+F_smith = F;
 
 figure
 plot(1:1:T, F_evol);
