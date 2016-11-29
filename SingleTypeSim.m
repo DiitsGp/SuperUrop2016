@@ -38,8 +38,9 @@ C = zeros(n, 1);
 T = 10^3;
 eta = 1/sqrt(T);
 F_evol = zeros(m, T); % for plotting
+C_evol = zeros(n, T);
 
-%% Simulate
+%% Simulate the standard potential function
 for i = 1:T
    F_evol(:, i) = F;
    G = A*F;
@@ -48,6 +49,7 @@ for i = 1:T
       g = G(j);
       C(n) = c(1)*g^2 + c(2)*g + c(3);
    end
+   C_evol(:, i) = C;
    grad_phi = A'*C;
    F_tilde = F - eta*grad_phi;
    
@@ -57,4 +59,47 @@ end
 figure
 plot(1:1:T, F_evol);
 title('Traffic Flow to Equilibrium of the Standard Potential Function on Marden Example');
+legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+
+figure
+plot(1:1:T, A'*C_evol);
+title('Costs Along Routes of the Standard Potential Function on Marden Example');
+legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+
+%% Simulate the potential function given in Smith
+
+for i = 1:T
+   F_evol(:, i) = F;
+   G = A*F;
+      for j = 1:n
+      c = C_coeff(j, :);
+      g = G(j);
+      C(n) = c(1)*g^2 + c(2)*g + c(3);
+   end
+   C_evol(:, i) = C;
+   route_cost = A'*C;
+   
+   grad_phi = zeros(m, 1);
+   for j = 1:m
+       for k = 1:m
+           if C(j) > C(k)
+               delta_jk = zeros(m, 1);
+               delta_jk(j) = -1; delta_jk(k) = 1;
+               grad_phi = grad_phi(j) + (F(j)*(C(j)-C(k))).*delta_jk;
+           end
+       end
+   end
+   F_tilde = F - eta*grad_phi;
+   
+   F = projsplx(F_tilde);
+end
+
+figure
+plot(1:1:T, F_evol);
+title('Traffic Flow to Equilibrium of the Smith Potential Function on Marden Example');
+legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+
+figure
+plot(1:1:T, A'*C_evol);
+title('Costs Along Routes of the Smith Potential Function on Marden Example');
 legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
