@@ -11,11 +11,12 @@
 % So that F, G, C are vector-functions of time
 % Let A be the adjency matrix of size nxm so that:
 %   A_ij = 1 iff edge i belongs to route j and A_ij = 0 otherwise
-% We will simulate the dynamics of the system from t=1 to t=T for the
+% I will simulate the dynamics of the system from t=1 to t=T for the
 %   example given in Marden et al.'s 'Joint Strategy Fictitious Play With
 %   Inertia for Potential Games'
 
 %% Initialize
+close all;
 rng(0);
 
 % In the Marden example there are 10 edges, each corresponding to a unique
@@ -35,7 +36,7 @@ C_coeff = rand(n, 3); %a_i x^2 + b_i x + c_i
 C = zeros(n, 1);
 
 % Simulate for T = 10^3 timesteps
-T = 10^3;
+T = 10^4;
 eta = 1/sqrt(T);
 F_evol = zeros(m, T); % for plotting
 C_evol = zeros(n, T);
@@ -57,6 +58,7 @@ for i = 1:T
 end
 
 F_standard = F;
+route_cost_standard = A'*C;
 
 figure
 plot(1:1:T, F_evol);
@@ -88,16 +90,17 @@ for i = 1:T
            if C(j) > C(k)
                delta_jk = zeros(m, 1);
                delta_jk(j) = -1; delta_jk(k) = 1;
-               grad_phi = grad_phi(j) + (F(j)*(C(j)-C(k))).*delta_jk;
+               grad_phi = grad_phi + (F(j)*(C(j)-C(k)))*delta_jk;
            end
        end
    end
-   F_tilde = F - eta*grad_phi;
+   F_tilde = F + eta*grad_phi;
    
    F = projsplx(F_tilde);
 end
 
 F_smith = F;
+route_cost_smith = route_cost;
 
 figure
 plot(1:1:T, F_evol);
