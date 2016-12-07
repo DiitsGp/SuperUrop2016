@@ -65,10 +65,10 @@ plot(1:1:T, F_evol);
 title('Traffic Flow to Equilibrium of the Cost Minimizing Potential Function on Marden Example');
 legend('flow along route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
 
-figure
-plot(1:1:T, A*C_evol);
-title('Costs Along Routes of the Standard Potential Function on Marden Example');
-legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+% figure
+% plot(1:1:T, A*C_evol);
+% title('Costs Along Routes of the Standard Potential Function on Marden Example');
+% legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
 
 %% Simulate the potential function given in Smith
 F = F0;
@@ -83,7 +83,7 @@ for i = 1:T
    end
    C_evol(:, i) = C;
    route_cost = A*C;
-   
+
    grad_phi = zeros(m, 1);
    for j = 1:m
        for k = 1:m
@@ -107,7 +107,47 @@ plot(1:1:T, F_evol);
 title('Traffic Flow to Equilibrium of the Load Balancing Potential Function on Marden Example');
 legend('flow along route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
 
+% figure
+% plot(1:1:T, A*C_evol);
+% title('Costs Along Routes of the Smith Potential Function on Marden Example');
+% legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+
+%% Simulate the edge-wise potential function instead of the route-wise one
+F = F0;
+
+for i = 1:T
+   F_evol(:, i) = F;
+   G = A'*F;
+      for j = 1:n
+      c = C_coeff(j, :);
+      g = G(j);
+      C(j) = c(1)*g^2 + c(2)*g + c(3);
+   end
+   C_evol(:, i) = C;
+   route_cost = A*C;
+
+   grad_phi = A'*route_cost;
+   sumG = sum(G);
+   G_tilde = G/sumG - eta*grad_phi;
+   G_tilde = sumG*projsplx(G_tilde);
+   
+   F = (A*A')\A*G_tilde;
+   % Not sure why I have to normalize route flow before projecting onto the
+   % simplex?
+   %F = projsplx(F);
+   F = F/sum(F);
+   F = projsplx(F);
+end
+
+F_edge = F;
+route_cost_edge = route_cost;
+
 figure
-plot(1:1:T, A*C_evol);
-title('Costs Along Routes of the Smith Potential Function on Marden Example');
-legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+plot(1:1:T, F_evol);
+title('Traffic Flow to Equilibrium of the Edge-wise Potential Function on Marden Example');
+legend('flow along route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+
+% figure
+% plot(1:1:T, A*C_evol);
+% title('Costs Along Routes of the Edge-wise Potential Function on Marden Example');
+% legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
