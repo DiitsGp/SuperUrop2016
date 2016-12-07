@@ -66,6 +66,7 @@ title('Costs Along Routes Without Zero Cost Edge');
 legend('route 1', 'route 2');
 
 %% Simulate the standard potential function with the zero cost edge
+% Diits does experimentation here
 rng(0);
 F0 = rand(mbp, 1);
 F0 = F0/sum(F0);
@@ -80,10 +81,17 @@ for i = 1:T
       C_BP(j) = c(1)*g + c(2);
    end
    C_BPevol(:, i) = C_BP;
-   grad_phi = A_BP*C_BP;
-   F_tilde = F - eta*grad_phi;
+   route_costs = A_BP*C_BP;
+   grad_phi = A_BP'*route_costs;
    
-   F = projsplx(F_tilde);
+   sumG = sum(G);
+   G_tilde = G/sumG - eta*grad_phi;
+   G_tilde = sumG*projsplx(G_tilde);
+   
+   % weird stuff in the next command: if you don't do the projsplx, you
+   % don't get sum(F) = 1? I would expect that you should?
+   F = (A_BP*A_BP')\A_BP*G_tilde;
+   F = projsplx(F);
 end
 
 figure
