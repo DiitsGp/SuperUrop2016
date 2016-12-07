@@ -44,29 +44,29 @@ C_evol = zeros(n, T);
 %% Simulate the standard potential function
 for i = 1:T
    F_evol(:, i) = F;
-   G = A*F;
+   G = A'*F;
    for j = 1:n
       c = C_coeff(j, :);
       g = G(j);
-      C(n) = c(1)*g^2 + c(2)*g + c(3);
+      C(j) = c(1)*g^2 + c(2)*g + c(3);
    end
    C_evol(:, i) = C;
-   grad_phi = A'*C;
+   grad_phi = A*C;
    F_tilde = F - eta*grad_phi;
    
    F = projsplx(F_tilde);
 end
 
 F_standard = F;
-route_cost_standard = A'*C;
+route_cost_standard = A*C;
 
 figure
 plot(1:1:T, F_evol);
-title('Traffic Flow to Equilibrium of the Standard Potential Function on Marden Example');
-legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+title('Traffic Flow to Equilibrium of the Cost Minimizing Potential Function on Marden Example');
+legend('flow along route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
 
 figure
-plot(1:1:T, A'*C_evol);
+plot(1:1:T, A*C_evol);
 title('Costs Along Routes of the Standard Potential Function on Marden Example');
 legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
 
@@ -75,14 +75,14 @@ F = F0;
 
 for i = 1:T
    F_evol(:, i) = F;
-   G = A*F;
+   G = A'*F;
       for j = 1:n
       c = C_coeff(j, :);
       g = G(j);
-      C(n) = c(1)*g^2 + c(2)*g + c(3);
+      C(j) = c(1)*g^2 + c(2)*g + c(3);
    end
    C_evol(:, i) = C;
-   route_cost = A'*C;
+   route_cost = A*C;
    
    grad_phi = zeros(m, 1);
    for j = 1:m
@@ -104,10 +104,10 @@ route_cost_smith = route_cost;
 
 figure
 plot(1:1:T, F_evol);
-title('Traffic Flow to Equilibrium of the Smith Potential Function on Marden Example');
-legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
+title('Traffic Flow to Equilibrium of the Load Balancing Potential Function on Marden Example');
+legend('flow along route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
 
 figure
-plot(1:1:T, A'*C_evol);
+plot(1:1:T, A*C_evol);
 title('Costs Along Routes of the Smith Potential Function on Marden Example');
 legend('route 1', 'route 2', 'route 3', 'route 4', 'route 5', 'route 6', 'route 7', 'route 8', 'route 9', 'route 10');
