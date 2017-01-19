@@ -107,7 +107,8 @@ for i = 1:T
    end
    
    C_BPevol(:, i) = C_BP;
-   grad_phi = [2*G(1) + 1; 2*G(1) + 2*G(4); 2*G(4) + 1];
+   grad_edges = 2*C_BPcoeff(:, 1) .* G + C_BPcoeff(:, 2);
+   grad_phi = A_BP*grad_edges;
    F_tilde = F - eta*grad_phi;
    
    F = projsplx(F_tilde);
