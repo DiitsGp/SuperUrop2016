@@ -26,7 +26,7 @@ C_BPcoeff = [1 0;...
     0 1;...
     0 1;...
     1 0;...
-    0 0];
+    0 0]; % [x; 1; 1; x; 0]
 C_BP = zeros(nbp, 1);
 
 % Simulate for T = 10^4 timesteps
@@ -63,7 +63,7 @@ C_BPevol = zeros(nbp, T);
 % title('Costs Along Routes Without Zero Cost Edge');
 % legend('route 1', 'route 2');
 
-%% Simulate the standard potential function with the zero cost edge
+%% Simulate the standard potential function with the zero cost edge Wardrop Equilibrium
 rng(0);
 F0 = rand(mbp, 1);
 F0 = F0/sum(F0);
@@ -77,24 +77,24 @@ for i = 1:T
       g = G(j);
       C_BP(j) = c(1)*g + c(2);
    end
+   
    C_BPevol(:, i) = C_BP;
    grad_phi = A_BP*C_BP;
    F_tilde = F - eta*grad_phi;
-   
    F = projsplx(F_tilde);
 end
 
 figure
 plot(1:1:T, F_BPevol);
-title('Traffic Flow to Equilibrium With the Zero Cost Edge Using Flow Simulation');
+title('Traffic Flow to Equilibrium With the Zero Cost Edge Wardrop Equilibrium');
 legend('flow along route 1', 'route 2', 'route 3');
 
 figure
 plot(1:1:T, A_BP*C_BPevol);
-title('Costs Along Routes With the Zero Cost Edge Using Flow Simulation');
+title('Costs Along Routes With the Zero Cost Edge Using Wardrop Equilibrium');
 legend('route 1', 'route 2', 'route 3');
 
-%% Simulate the standard potential function with the zero cost edge using Edge simulation
+%% Simulate the standard potential function with the zero cost edge Social Optimum
 F = F0;
 
 for i = 1:T
@@ -105,28 +105,20 @@ for i = 1:T
       g = G(j);
       C_BP(j) = c(1)*g + c(2);
    end
+   
    C_BPevol(:, i) = C_BP;
-   route_costs = A_BP*C_BP;
-   grad_phi = A_BP'*route_costs;
+   grad_phi = [2*G(1) + 1; 2*G(1) + 2*G(4); 2*G(4) + 1];
+   F_tilde = F - eta*grad_phi;
    
-   sumG = sum(G);
-   G_tilde = G/sumG - eta*grad_phi;
-   G_tilde = sumG*projsplx(G_tilde);
-   
-   F = (A_BP*A_BP')\A_BP*G_tilde;
-   % Not sure why I have to normalize route flow before projecting onto the
-   % simplex?
-   %F = projsplx(F);
-   F = F/sum(F);
-   F = projsplx(F);
+   F = projsplx(F_tilde);
 end
 
 figure
 plot(1:1:T, F_BPevol);
-title('Traffic Flow to Equilibrium With the Zero Cost Edge Using Edge Simulation');
+title('Traffic Flow to Equilibrium With the Zero Cost Edge Social Optimum');
 legend('flow along route 1', 'route 2', 'route 3');
 
 figure
 plot(1:1:T, A_BP*C_BPevol);
-title('Costs Along Routes With the Zero Cost Edge Using Edge Simulation');
+title('Costs Along Routes With the Zero Cost Edge Social Optimum');
 legend('route 1', 'route 2', 'route 3');
